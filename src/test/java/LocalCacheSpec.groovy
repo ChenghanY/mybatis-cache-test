@@ -11,22 +11,30 @@ class LocalCacheSpec extends BaseSpec {
     @Resource
     TransactionTemplate transaction;
 
-    def "事务开启后本地缓存生效"() {
+    // debug 建议 BaseExecutor.java:154
+    def "未使用事务，第二次查询，不命中本地缓存"() {
         given:
-        // 有事务的两个查询
+        def list1 = mapper.select()
+        def list2 = mapper.select()
+
+        expect:
+        list1 !== list2
+    }
+
+    def "使用事务，命中缓存"() {
+        given:
         def list1 = []
         def list2 = []
+
+        when:
         transaction.execute {
             list1 = mapper.select()
             list2 = mapper.select()
         }
 
-        // 无事务的查询
-        def list3  = mapper.select()
-        def list4  = mapper.select()
-
-        expect:
+        then:
+        // 同一个事务使用同一个SqlSession，若引用相同则认为命中缓存
         list1 === list2
-        list3 !== list4
     }
+
 }
