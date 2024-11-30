@@ -2,13 +2,13 @@ import com.james.mapper.FileCacheMapper
 
 import javax.annotation.Resource
 
-class NamespaceCacheSpec extends BaseSpec {
+class GlobalCacheSpec extends BaseSpec {
 
     @Resource
     FileCacheMapper fileCacheMapper
 
     // debug 建议 CachingExecutor.java:96
-    def "Namespace缓存需要在xml文件中使用 <cache/> 标签启用"() {
+    def "全局缓存默认关闭，需要在xml文件中使用 <cache/> 标签启用"() {
         given:
         def list1  = fileCacheMapper.select()
         def list2  = fileCacheMapper.select()
